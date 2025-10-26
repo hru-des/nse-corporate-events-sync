@@ -12,7 +12,7 @@ RSS_URL = 'https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml
 HTML_URL = 'https://www.nseindia.com/companies-listing/corporate-filings-announcements'
 COMPANY_FILE = 'companies.txt'
 CALENDAR_ID = 'fcb0ebfa795ba8af091f332acac0c5f0a33c5bd4982ef4db622bb9467188d11c@group.calendar.google.com'
-FUZZY_THRESHOLD = 90
+FUZZY_THRESHOLD = 100
 EVENT_TAG = "[AUTO:NSE_RSS_SCRIPT]"
 GUEST_EMAIL = os.environ.get('GCAL_GUEST_EMAIL', "")
 
