@@ -15,15 +15,13 @@ from PyPDF2 import PdfReader
 RSS_URL = 'https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml'
 COMPANY_FILE = 'companies.txt'
 CALENDAR_ID = 'fcb0ebfa795ba8af091f332acac0c5f0a33c5bd4982ef4db622bb9467188d11c@group.calendar.google.com'
-FUZZY_THRESHOLD = 90
+FUZZY_THRESHOLD = 80
 EVENT_TAG = "[AUTO:NSE_RSS_SCRIPT]"
 GUEST_EMAIL = os.environ.get('GCAL_GUEST_EMAIL', "")
 
-# Normalize by removing punctuation/spacing and lowercase
 def normalize(text):
     return re.sub(r'[^a-zA-Z0-9]', '', text or '').lower()
 
-# Read companies from a text file, allow comma or lines
 def get_company_names():
     print("[INFO] Reading company names from file...")
     if not os.path.exists(COMPANY_FILE):
@@ -38,11 +36,13 @@ def get_company_names():
         print(f"[SUCCESS] Loaded companies: {companies}")
         return companies
 
-# Google Calendar API
 def google_calendar_service():
     print("[INFO] Initializing Google Calendar service...")
     try:
-        creds = Credentials.from_service_account_file('service-account.json', scopes=['https://www.googleapis.com/auth/calendar'])
+        creds = Credentials.from_service_account_file(
+            'service-account.json',
+            scopes=['https://www.googleapis.com/auth/calendar']
+        )
         service = build('calendar', 'v3', credentials=creds)
         print("[SUCCESS] Google Calendar service initialized.")
         return service
@@ -69,28 +69,28 @@ def filter_entries(entries, companies):
     print("[INFO] Filtering entries for company and keywords...")
     allowed_keywords = [
         'analyst', 'analysts', 'institutional', 'investor',
-        'concall', 'con. call', 'conferencecall', 'conference call',
+        'concall', 'conference call', 'conferencecall',
         'meet', 'call', 'meetconcall', 'meet/concall'
     ]
     allowed_keywords_norm = [normalize(k) for k in allowed_keywords]
     matches = []
+
     for entry in entries:
         try:
-            orig_title = entry.title if hasattr(entry, 'title') else ""
-            orig_summary = entry.get('summary', '')
-            title = normalize(orig_title)
-            summary = normalize(orig_summary)
+            title = normalize(entry.title if hasattr(entry, 'title') else "")
+            summary = normalize(entry.get('summary', ''))
             content = title + " " + summary
+
             for company in companies:
                 score = fuzz.partial_ratio(normalize(company), title)
                 key_hit = any(k in content for k in allowed_keywords_norm)
-                print(f"[DEBUG] Title: '{orig_title}' | Score: {score} | KeyHit: {key_hit} | Content: {content}")
                 if score >= FUZZY_THRESHOLD and key_hit:
-                    print(f"[MATCH] Company match: {company} - '{orig_title}'")
+                    print(f"[MATCH] {company} — '{entry.title}' (Score={score})")
                     matches.append(entry)
                     break
         except Exception as e:
-            print(f"[ERROR] While filtering entry '{getattr(entry, 'title', 'NO_TITLE')}': {e}")
+            print(f"[ERROR] While filtering '{getattr(entry, 'title', 'Unknown')}': {e}")
+
     print(f"[INFO] Filtered to {len(matches)} matches.")
     return matches
 
@@ -102,7 +102,6 @@ def parse_pdf_details(pdf_url):
         "Connection": "keep-alive",
     }
 
-    # Retry strategy to handle dropped or slow NSE connections
     session = requests.Session()
     retries = Retry(total=3, backoff_factor=2, status_forcelist=[500, 502, 503, 504, 429])
     session.mount("https://", HTTPAdapter(max_retries=retries))
@@ -113,38 +112,20 @@ def parse_pdf_details(pdf_url):
             print(f"[ERROR] PDF download failed: HTTP {response.status_code}")
             return {}
 
-        # Write to a temporary file
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
             tmp_pdf.write(response.content)
             tmp_pdf.flush()
 
-            print("[INFO] Reading and parsing PDF text...")
             reader = PdfReader(tmp_pdf.name)
-
             text = ""
-            for page_number, page in enumerate(reader.pages, start=1):
-                try:
-                    text_segment = page.extract_text() or ""
-                    text += text_segment
-                except Exception as ex:
-                    print(f"[WARN] Could not parse page {page_number}: {ex}")
+            for page in reader.pages:
+                text += page.extract_text() or ""
 
         if not text.strip():
-            print("[WARN] PDF text appears empty or image-based (OCR required).")
-            return {
-                'date': '',
-                'time': '',
-                'dial_in': '',
-                'registration_link': '',
-                'host': '',
-                'contacts': []
-            }
+            print("[WARN] PDF text appears empty or OCR-based.")
+            return {'date': '', 'time': '', 'dial_in': '', 'registration_link': '', 'host': '', 'contacts': []}
 
-        # Normalize whitespace
         text = re.sub(r'\s+', ' ', text)
-        text_lower = text.lower()
-
-        # Extract details
         fields = {
             'date': re.search(r'date[:\-\s]*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})', text, re.IGNORECASE),
             'time': re.search(r'(?:at|time)[:\-\s]*([0-9]{1,2}[:][0-9]{2}\s*(?:AM|PM|IST)?)', text, re.IGNORECASE),
@@ -153,9 +134,8 @@ def parse_pdf_details(pdf_url):
             'host': re.search(r'(?:Hosted\s*by|Moderator|Organised\s*by)[:\-\s]*([^\n]+)', text, re.IGNORECASE),
         }
 
-        # Multiple emails or phone numbers (IR or contact persons)
-        contacts_email = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
-        contacts_phone = re.findall(r'\+?\d[\d\s\-\(\)]{7,}\d', text)
+        contacts = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+        phones = re.findall(r'\+?\d[\d\s\-\(\)]{7,}\d', text)
 
         clean = {
             'date': fields['date'].group(1).strip() if fields['date'] else '',
@@ -163,78 +143,76 @@ def parse_pdf_details(pdf_url):
             'dial_in': fields['dial_in'].group(1).strip() if fields['dial_in'] else '',
             'registration_link': fields['registration_link'].group(1).strip() if fields['registration_link'] else '',
             'host': fields['host'].group(1).strip() if fields['host'] else '',
-            'contacts': list(set(contacts_email + contacts_phone))
+            'contacts': list(set(contacts + phones))
         }
 
-        print(f"[SUCCESS] Extracted PDF details:")
-        for key, value in clean.items():
-            print(f"   {key}: {value}")
-
+        print(f"[SUCCESS] Extracted PDF details.")
         return clean
 
-    except requests.exceptions.RequestException as e:
-        print(f"[ERROR] PDF download error for {pdf_url}: {e}")
-        return {}
     except Exception as e:
-        print(f"[ERROR] Unexpected error while parsing PDF: {e}")
+        print(f"[ERROR] PDF extraction failed for {pdf_url}: {e}")
         return {}
 
 def create_calendar_event(service, calendar_id, company, entry, details, guest_email):
     print(f"[INFO] Creating calendar event for {company}: {entry.title}")
     try:
         pdf_link = entry.get('link', '')
-        dt = details.get('date', '')
-        tm = details.get('time', '')
-        dial_in = details.get('dial_in', '')
-        reg_link = details.get('registration_link', '')
-        host = details.get('host', '')
+        dt, tm, dial_in, reg_link, host = (
+            details.get('date', ''), details.get('time', ''),
+            details.get('dial_in', ''), details.get('registration_link', ''),
+            details.get('host', '')
+        )
         contacts = ', '.join(details.get('contacts', []))
+
         summary = f"{company} Analyst/Concall"
         description = (
             f"Announcement link (PDF): {pdf_link}\n"
             f"Date: {dt}\nTime: {tm}\nDial-in info: {dial_in}\n"
             f"Registration link: {reg_link}\nHost: {host}\nContacts: {contacts}\n{EVENT_TAG}"
         )
-        # If unable to parse date/time, just use 'now'
+
         start_dt = datetime.datetime.now()
         try:
             if dt and tm:
                 combined = f"{dt.strip()} {tm.strip()}"
                 start_dt = datetime.datetime.strptime(combined, '%d-%b-%Y %I:%M %p')
         except Exception as e:
-            print(f"[WARN] Couldn't parse date/time from PDF, using now. Details: {e}")
+            print(f"[WARN] Failed to parse date/time: {e}")
+
         end_dt = start_dt + datetime.timedelta(minutes=30)
+
         event = {
             'summary': summary,
             'description': description,
             'start': {'dateTime': start_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'end': {'dateTime': end_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'location': 'Virtual',
-            'attendees': [] if guest_email else []
+            'attendees': []  # <-- avoids 403 "Service accounts cannot invite attendees"
         }
+
         service.events().insert(calendarId=calendar_id, body=event).execute()
         print(f"[SUCCESS] Event created: {summary}")
     except Exception as e:
-        print(f"[ERROR] Creating event: {e}")
+        print(f"[ERROR] Creating event failed: {e}")
 
 def main():
     print("[START] NSE Concall Automation Script")
     try:
         service = google_calendar_service()
-        company_names = get_company_names()
+        companies = get_company_names()
         print("[INFO] Company list loaded. Proceeding to fetch entries...")
         entries = fetch_rss_entries()
-        for company in company_names:
+
+        for company in companies:
             print(f"[INFO] Processing company: {company}")
-            relevant_entries = filter_entries(entries, [company])
-            if relevant_entries:
-                # Create events for ALL matches (not just the first)
-                for entry in relevant_entries:
-                    print(f"[INFO] Downloading and parsing PDF for event: {entry.title}")
-                    details = parse_pdf_details(entry.get('link', ''))
-                    create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
+            relevant = filter_entries(entries, [company])
+            if relevant:
+                entry = relevant[0]  # Only process latest event per company per run
+                print(f"[INFO] Downloading and parsing PDF for event: {entry.title}")
+                details = parse_pdf_details(entry.get('link', ''))
+                create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
             else:
-                print(f"[NO EVENT] No Analyst/Concall for: {company}")
+                print(f"[NO EVENT] No Analyst/Concall found for: {company}")
         print("[COMPLETE] Script execution finished.")
     except Exception as e:
         print(f"[FATAL ERROR] Script failed: {e}")
