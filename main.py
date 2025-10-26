@@ -1,13 +1,16 @@
 import os
+import re
+import time
+import tempfile
+import datetime
 import requests
 import feedparser
-import datetime
-import re
 from rapidfuzz import fuzz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from PyPDF2 import PdfReader
-import tempfile
 
 RSS_URL = 'https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml'
 COMPANY_FILE = 'companies.txt'
@@ -93,38 +96,87 @@ def filter_entries(entries, companies):
 
 def parse_pdf_details(pdf_url):
     print(f"[INFO] Downloading PDF: {pdf_url}")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; NSECorporateFilingsBot/1.0; +https://www.nseindia.com)",
+        "Accept": "application/pdf",
+        "Connection": "keep-alive",
+    }
+
+    # Retry strategy to handle dropped or slow NSE connections
+    session = requests.Session()
+    retries = Retry(total=3, backoff_factor=2, status_forcelist=[500, 502, 503, 504, 429])
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
     try:
-        r = requests.get(pdf_url)
-        if r.status_code != 200:
-            print(f"[ERROR] Could not download PDF (status {r.status_code}).")
+        response = session.get(pdf_url, headers=headers, timeout=25)
+        if response.status_code != 200:
+            print(f"[ERROR] PDF download failed: HTTP {response.status_code}")
             return {}
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_pdf:
-            tmp_pdf.write(r.content)
+
+        # Write to a temporary file
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
+            tmp_pdf.write(response.content)
             tmp_pdf.flush()
+
+            print("[INFO] Reading and parsing PDF text...")
             reader = PdfReader(tmp_pdf.name)
+
             text = ""
-            for page in reader.pages:
-                text += page.extract_text() or ""
-        fields = {}
-        fields['date'] = re.search(r'Date[:\-\s]*([^\n]+)', text)
-        fields['time'] = re.search(r'Time[:\-\s]*([^\n]+)', text)
-        fields['dial_in'] = re.search(r'Dial[-\s]*in[:\-\s]*([^\n]+)', text)
-        fields['registration_link'] = re.search(r'(Express Join|DiamondPass|Pre[-\s]registration|Registration)[:\-\s]*([^\s\n]+)', text)
-        fields['host'] = re.search(r'(Host|Moderator)[:\-\s]*([^\n]+)', text)
-        fields['contacts'] = re.findall(r'(Contact|IR)[:\-\s]*([^\n]+)', text)
-        clean = {}
-        for k, v in fields.items():
-            if v is None:
-                clean[k] = ""
-            elif hasattr(v, 'group') and v.lastindex >= 1:
-                clean[k] = v.group(v.lastindex)
-            else:
-                clean[k] = v
-        clean['contacts'] = [c[1] for c in fields['contacts']] if fields.get('contacts') else []
-        print(f"[SUCCESS] Extracted PDF details: {clean}")
+            for page_number, page in enumerate(reader.pages, start=1):
+                try:
+                    text_segment = page.extract_text() or ""
+                    text += text_segment
+                except Exception as ex:
+                    print(f"[WARN] Could not parse page {page_number}: {ex}")
+
+        if not text.strip():
+            print("[WARN] PDF text appears empty or image-based (OCR required).")
+            return {
+                'date': '',
+                'time': '',
+                'dial_in': '',
+                'registration_link': '',
+                'host': '',
+                'contacts': []
+            }
+
+        # Normalize whitespace
+        text = re.sub(r'\s+', ' ', text)
+        text_lower = text.lower()
+
+        # Extract details
+        fields = {
+            'date': re.search(r'date[:\-\s]*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})', text, re.IGNORECASE),
+            'time': re.search(r'(?:at|time)[:\-\s]*([0-9]{1,2}[:][0-9]{2}\s*(?:AM|PM|IST)?)', text, re.IGNORECASE),
+            'dial_in': re.search(r'(Dial[\s\-]*in[:\-\s]*[^\n]+|Universal Access[:\-\s]*[^\n]+)', text, re.IGNORECASE),
+            'registration_link': re.search(r'(https?://[^\s]*diamondpass[^\s]*)', text, re.IGNORECASE),
+            'host': re.search(r'(?:Hosted\s*by|Moderator|Organised\s*by)[:\-\s]*([^\n]+)', text, re.IGNORECASE),
+        }
+
+        # Multiple emails or phone numbers (IR or contact persons)
+        contacts_email = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+        contacts_phone = re.findall(r'\+?\d[\d\s\-\(\)]{7,}\d', text)
+
+        clean = {
+            'date': fields['date'].group(1).strip() if fields['date'] else '',
+            'time': fields['time'].group(1).strip() if fields['time'] else '',
+            'dial_in': fields['dial_in'].group(1).strip() if fields['dial_in'] else '',
+            'registration_link': fields['registration_link'].group(1).strip() if fields['registration_link'] else '',
+            'host': fields['host'].group(1).strip() if fields['host'] else '',
+            'contacts': list(set(contacts_email + contacts_phone))
+        }
+
+        print(f"[SUCCESS] Extracted PDF details:")
+        for key, value in clean.items():
+            print(f"   {key}: {value}")
+
         return clean
+
+    except requests.exceptions.RequestException as e:
+        print(f"[ERROR] PDF download error for {pdf_url}: {e}")
+        return {}
     except Exception as e:
-        print(f"[ERROR] PDF extraction {pdf_url}: {e}")
+        print(f"[ERROR] Unexpected error while parsing PDF: {e}")
         return {}
 
 def create_calendar_event(service, calendar_id, company, entry, details, guest_email):
@@ -158,7 +210,7 @@ def create_calendar_event(service, calendar_id, company, entry, details, guest_e
             'start': {'dateTime': start_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'end': {'dateTime': end_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'location': 'Virtual',
-            'attendees': [{'email': guest_email}] if guest_email else []
+            'attendees': [] if guest_email else []
         }
         service.events().insert(calendarId=calendar_id, body=event).execute()
         print(f"[SUCCESS] Event created: {summary}")
