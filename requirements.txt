@@ -1,1 +1,7 @@
-Mold-Tek Packaging Limited
+requests
+feedparser
+rapidfuzz
+google-auth
+google-auth-oauthlib
+google-api-python-client
+PyPDF2
