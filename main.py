@@ -2,6 +2,7 @@ import os
 import requests
 import feedparser
 import datetime
+import re
 from rapidfuzz import fuzz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -15,17 +16,11 @@ FUZZY_THRESHOLD = 90
 EVENT_TAG = "[AUTO:NSE_RSS_SCRIPT]"
 GUEST_EMAIL = os.environ.get('GCAL_GUEST_EMAIL', "")
 
-def google_calendar_service():
-    print("[INFO] Initializing Google Calendar service...")
-    try:
-        creds = Credentials.from_service_account_file('service-account.json', scopes=['https://www.googleapis.com/auth/calendar'])
-        service = build('calendar', 'v3', credentials=creds)
-        print("[SUCCESS] Google Calendar service initialized.")
-        return service
-    except Exception as e:
-        print(f"[ERROR] Failed to initialize Google Calendar service: {e}")
-        raise
+# Normalize by removing punctuation/spacing and lowercase
+def normalize(text):
+    return re.sub(r'[^a-zA-Z0-9]', '', text or '').lower()
 
+# Read companies from a text file, allow comma or lines
 def get_company_names():
     print("[INFO] Reading company names from file...")
     if not os.path.exists(COMPANY_FILE):
@@ -39,6 +34,18 @@ def get_company_names():
             companies = [line.strip() for line in data.splitlines() if line.strip()]
         print(f"[SUCCESS] Loaded companies: {companies}")
         return companies
+
+# Google Calendar API
+def google_calendar_service():
+    print("[INFO] Initializing Google Calendar service...")
+    try:
+        creds = Credentials.from_service_account_file('service-account.json', scopes=['https://www.googleapis.com/auth/calendar'])
+        service = build('calendar', 'v3', credentials=creds)
+        print("[SUCCESS] Google Calendar service initialized.")
+        return service
+    except Exception as e:
+        print(f"[ERROR] Failed to initialize Google Calendar service: {e}")
+        raise
 
 def fetch_rss_entries():
     print(f"[INFO] Fetching RSS from {RSS_URL} ...")
@@ -59,21 +66,25 @@ def filter_entries(entries, companies):
     print("[INFO] Filtering entries for company and keywords...")
     allowed_keywords = [
         'analyst', 'analysts', 'institutional', 'investor',
-        'concall', 'conference call', 'meet', 'call'
+        'concall', 'con. call', 'conferencecall', 'conference call',
+        'meet', 'call', 'meetconcall', 'meet/concall'
     ]
+    allowed_keywords_norm = [normalize(k) for k in allowed_keywords]
     matches = []
     for entry in entries:
         try:
-            title = entry.title.lower()
-            summary = entry.get('summary', '').lower()
-            content = title + ' ' + summary
+            orig_title = entry.title if hasattr(entry, 'title') else ""
+            orig_summary = entry.get('summary', '')
+            title = normalize(orig_title)
+            summary = normalize(orig_summary)
+            content = title + " " + summary
             for company in companies:
-                score = fuzz.partial_ratio(company.lower(), content)
-                keyword_hit = [k for k in allowed_keywords if k in content]
-                print(f"[DEBUG] Entry: '{entry.title}' | Score: {score} | Keywords found: {keyword_hit}")
-                if score >= FUZZY_THRESHOLD and keyword_hit:
+                score = fuzz.partial_ratio(normalize(company), title)
+                key_hit = any(k in content for k in allowed_keywords_norm)
+                print(f"[DEBUG] Title: '{orig_title}' | Score: {score} | KeyHit: {key_hit} | Content: {content}")
+                if score >= FUZZY_THRESHOLD and key_hit:
+                    print(f"[MATCH] Company match: {company} - '{orig_title}'")
                     matches.append(entry)
-                    print(f"[MATCH] Found ({company}) in '{entry.title}'")
                     break
         except Exception as e:
             print(f"[ERROR] While filtering entry '{getattr(entry, 'title', 'NO_TITLE')}': {e}")
@@ -94,7 +105,6 @@ def parse_pdf_details(pdf_url):
             text = ""
             for page in reader.pages:
                 text += page.extract_text() or ""
-        import re
         fields = {}
         fields['date'] = re.search(r'Date[:\-\s]*([^\n]+)', text)
         fields['time'] = re.search(r'Time[:\-\s]*([^\n]+)', text)
@@ -166,10 +176,11 @@ def main():
             print(f"[INFO] Processing company: {company}")
             relevant_entries = filter_entries(entries, [company])
             if relevant_entries:
-                entry = relevant_entries[0]
-                print(f"[INFO] Downloading and parsing PDF for event: {entry.title}")
-                details = parse_pdf_details(entry.get('link', ''))
-                create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
+                # Create events for ALL matches (not just the first)
+                for entry in relevant_entries:
+                    print(f"[INFO] Downloading and parsing PDF for event: {entry.title}")
+                    details = parse_pdf_details(entry.get('link', ''))
+                    create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
             else:
                 print(f"[NO EVENT] No Analyst/Concall for: {company}")
         print("[COMPLETE] Script execution finished.")
