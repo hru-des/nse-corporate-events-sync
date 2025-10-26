@@ -106,63 +106,66 @@ def parse_pdf_details(pdf_url):
     retries = Retry(total=3, backoff_factor=2, status_forcelist=[500, 502, 503, 504, 429])
     session.mount("https://", HTTPAdapter(max_retries=retries))
 
-    # Retry block for long NSE PDF latency
+    # Use streamed download instead of full blocking request
     for attempt in range(3):
         try:
-            response = session.get(pdf_url, headers=headers, timeout=60)
-            if response.status_code == 200:
-                break
+            with session.get(pdf_url, headers=headers, timeout=(10, 90), stream=True) as response:
+                if response.status_code == 200:
+                    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
+                        for chunk in response.iter_content(chunk_size=8192):
+                            if chunk:
+                                tmp_pdf.write(chunk)
+                        tmp_pdf.flush()
+                        print(f"[INFO] PDF downloaded successfully (attempt {attempt+1}).")
+
+                        # read PDF text
+                        reader = PdfReader(tmp_pdf.name)
+                        text = ""
+                        for page in reader.pages:
+                            text += page.extract_text() or ""
+
+                    break  # Exit retry loop if successful
+                else:
+                    print(f"[WARN] HTTP {response.status_code} on attempt {attempt+1}. Retrying...")
         except requests.exceptions.Timeout:
-            print(f"[WARN] Timeout on attempt {attempt + 1}, retrying in 5s...")
+            print(f"[WARN] Download timeout on attempt {attempt+1}. Waiting before retry...")
+            time.sleep(10)
+        except Exception as e:
+            print(f"[WARN] Error on attempt {attempt+1}: {e}")
             time.sleep(5)
     else:
-        print("[ERROR] All attempts to fetch PDF timed out.")
+        print("[ERROR] All attempts to fetch PDF failed due to timeout.")
         return {}
 
-    try:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
-            tmp_pdf.write(response.content)
-            tmp_pdf.flush()
+    # --- continue with text parsing ---
+    if not text.strip():
+        print("[WARN] PDF appears empty or OCR-based.")
+        return {'date': '', 'time': '', 'dial_in': '', 'registration_link': '', 'host': '', 'contacts': []}
 
-            reader = PdfReader(tmp_pdf.name)
-            text = ""
-            for page in reader.pages:
-                text += page.extract_text() or ""
+    text = re.sub(r'\s+', ' ', text)
+    fields = {
+        'date': re.search(r'date[:\-\s]*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})', text, re.IGNORECASE),
+        'time': re.search(r'(?:at|time)[:\-\s]*([0-9]{1,2}[:][0-9]{2}\s*(?:AM|PM|IST)?)', text, re.IGNORECASE),
+        'dial_in': re.search(r'(Dial[\s\-]*in[:\-\s]*[^\n]+|Universal Access[:\-\s]*[^\n]+)', text, re.IGNORECASE),
+        'registration_link': re.search(r'(https?://[^\s]*diamondpass[^\s]*)', text, re.IGNORECASE),
+        'host': re.search(r'(?:Hosted\s*by|Moderator|Organised\s*by)[:\-\s]*([^\n]+)', text, re.IGNORECASE),
+    }
 
-        if not text.strip():
-            print("[WARN] PDF appears empty or OCR-based.")
-            return {
-                'date': '', 'time': '', 'dial_in': '',
-                'registration_link': '', 'host': '', 'contacts': []
-            }
+    contacts = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+    phones = re.findall(r'\+?\d[\d\s\-\(\)]{7,}\d', text)
 
-        text = re.sub(r'\s+', ' ', text)
-        fields = {
-            'date': re.search(r'date[:\-\s]*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})', text, re.IGNORECASE),
-            'time': re.search(r'(?:at|time)[:\-\s]*([0-9]{1,2}[:][0-9]{2}\s*(?:AM|PM|IST)?)', text, re.IGNORECASE),
-            'dial_in': re.search(r'(Dial[\s\-]*in[:\-\s]*[^\n]+|Universal Access[:\-\s]*[^\n]+)', text, re.IGNORECASE),
-            'registration_link': re.search(r'(https?://[^\s]*diamondpass[^\s]*)', text, re.IGNORECASE),
-            'host': re.search(r'(?:Hosted\s*by|Moderator|Organised\s*by)[:\-\s]*([^\n]+)', text, re.IGNORECASE),
-        }
+    clean = {
+        'date': fields['date'].group(1).strip() if fields['date'] else '',
+        'time': fields['time'].group(1).strip() if fields['time'] else '',
+        'dial_in': fields['dial_in'].group(1).strip() if fields['dial_in'] else '',
+        'registration_link': fields['registration_link'].group(1).strip() if fields['registration_link'] else '',
+        'host': fields['host'].group(1).strip() if fields['host'] else '',
+        'contacts': list(set(contacts + phones))
+    }
 
-        contacts = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
-        phones = re.findall(r'\+?\d[\d\s\-\(\)]{7,}\d', text)
+    print(f"[SUCCESS] Extracted PDF details.")
+    return clean
 
-        clean = {
-            'date': fields['date'].group(1).strip() if fields['date'] else '',
-            'time': fields['time'].group(1).strip() if fields['time'] else '',
-            'dial_in': fields['dial_in'].group(1).strip() if fields['dial_in'] else '',
-            'registration_link': fields['registration_link'].group(1).strip() if fields['registration_link'] else '',
-            'host': fields['host'].group(1).strip() if fields['host'] else '',
-            'contacts': list(set(contacts + phones))
-        }
-
-        print(f"[SUCCESS] Extracted PDF details.")
-        return clean
-
-    except Exception as e:
-        print(f"[ERROR] PDF extraction failed for {pdf_url}: {e}")
-        return {}
 
 def create_calendar_event(service, calendar_id, company, entry, details, guest_email):
     print(f"[INFO] Creating calendar event for {company}: {entry.title}")
