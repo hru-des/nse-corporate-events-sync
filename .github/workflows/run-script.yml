@@ -1,0 +1,37 @@
+name: Run NSE-RSS-GCal
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs hourly
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Create service-account.json from secret
+      env:
+        SERVICE_KEY: ${{ secrets.GCAL_SERVICE_KEY }}
+      run: echo "$SERVICE_KEY" > service-account.json
+
+    - name: Set guest email env (hidden)
+      env:
+        GUEST_EMAIL: ${{ secrets.GCAL_GUEST_EMAIL }}
+      run: echo "GCAL_GUEST_EMAIL=${GUEST_EMAIL}" >> $GITHUB_ENV
+
+    - name: Run script
+      env:
+        GCAL_GUEST_EMAIL: ${{ secrets.GCAL_GUEST_EMAIL }}
+      run: python main.py
