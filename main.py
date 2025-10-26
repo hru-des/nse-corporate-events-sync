@@ -57,7 +57,10 @@ def fetch_rss_entries():
 
 def filter_entries(entries, companies):
     print("[INFO] Filtering entries for company and keywords...")
-    allowed_keywords = ['analysts', 'institutional investor', 'concall']
+    allowed_keywords = [
+        'analyst', 'analysts', 'institutional', 'investor',
+        'concall', 'conference call', 'meet', 'call'
+    ]
     matches = []
     for entry in entries:
         try:
@@ -66,15 +69,14 @@ def filter_entries(entries, companies):
             content = title + ' ' + summary
             for company in companies:
                 score = fuzz.partial_ratio(company.lower(), content)
-                if score >= FUZZY_THRESHOLD and any(k in content for k in allowed_keywords):
-                    dt = entry.get('published_parsed', None)
-                    if dt and datetime.datetime(*dt[:6]) > datetime.datetime.now():
-                        matches.append(entry)
-                        print(f"[MATCH] Found ({company}) in '{entry.title}'")
+                keyword_hit = [k for k in allowed_keywords if k in content]
+                print(f"[DEBUG] Entry: '{entry.title}' | Score: {score} | Keywords found: {keyword_hit}")
+                if score >= FUZZY_THRESHOLD and keyword_hit:
+                    matches.append(entry)
+                    print(f"[MATCH] Found ({company}) in '{entry.title}'")
                     break
         except Exception as e:
             print(f"[ERROR] While filtering entry '{getattr(entry, 'title', 'NO_TITLE')}': {e}")
-    matches.sort(key=lambda x: x.published_parsed, reverse=True)
     print(f"[INFO] Filtered to {len(matches)} matches.")
     return matches
 
@@ -131,6 +133,7 @@ def create_calendar_event(service, calendar_id, company, entry, details, guest_e
             f"Date: {dt}\nTime: {tm}\nDial-in info: {dial_in}\n"
             f"Registration link: {reg_link}\nHost: {host}\nContacts: {contacts}\n{EVENT_TAG}"
         )
+        # If unable to parse date/time, just use 'now'
         start_dt = datetime.datetime.now()
         try:
             if dt and tm:
@@ -168,7 +171,7 @@ def main():
                 details = parse_pdf_details(entry.get('link', ''))
                 create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
             else:
-                print(f"[NO EVENT] No future-dated Analyst/Concall for: {company}")
+                print(f"[NO EVENT] No Analyst/Concall for: {company}")
         print("[COMPLETE] Script execution finished.")
     except Exception as e:
         print(f"[FATAL ERROR] Script failed: {e}")
