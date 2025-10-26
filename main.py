@@ -106,12 +106,20 @@ def parse_pdf_details(pdf_url):
     retries = Retry(total=3, backoff_factor=2, status_forcelist=[500, 502, 503, 504, 429])
     session.mount("https://", HTTPAdapter(max_retries=retries))
 
-    try:
-        response = session.get(pdf_url, headers=headers, timeout=25)
-        if response.status_code != 200:
-            print(f"[ERROR] PDF download failed: HTTP {response.status_code}")
-            return {}
+    # Retry block for long NSE PDF latency
+    for attempt in range(3):
+        try:
+            response = session.get(pdf_url, headers=headers, timeout=60)
+            if response.status_code == 200:
+                break
+        except requests.exceptions.Timeout:
+            print(f"[WARN] Timeout on attempt {attempt + 1}, retrying in 5s...")
+            time.sleep(5)
+    else:
+        print("[ERROR] All attempts to fetch PDF timed out.")
+        return {}
 
+    try:
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
             tmp_pdf.write(response.content)
             tmp_pdf.flush()
@@ -122,8 +130,11 @@ def parse_pdf_details(pdf_url):
                 text += page.extract_text() or ""
 
         if not text.strip():
-            print("[WARN] PDF text appears empty or OCR-based.")
-            return {'date': '', 'time': '', 'dial_in': '', 'registration_link': '', 'host': '', 'contacts': []}
+            print("[WARN] PDF appears empty or OCR-based.")
+            return {
+                'date': '', 'time': '', 'dial_in': '',
+                'registration_link': '', 'host': '', 'contacts': []
+            }
 
         text = re.sub(r'\s+', ' ', text)
         fields = {
@@ -168,7 +179,8 @@ def create_calendar_event(service, calendar_id, company, entry, details, guest_e
         description = (
             f"Announcement link (PDF): {pdf_link}\n"
             f"Date: {dt}\nTime: {tm}\nDial-in info: {dial_in}\n"
-            f"Registration link: {reg_link}\nHost: {host}\nContacts: {contacts}\n{EVENT_TAG}"
+            f"Registration link: {reg_link}\nHost: {host}\n"
+            f"Contacts: {contacts}\n{EVENT_TAG}"
         )
 
         start_dt = datetime.datetime.now()
@@ -187,7 +199,7 @@ def create_calendar_event(service, calendar_id, company, entry, details, guest_e
             'start': {'dateTime': start_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'end': {'dateTime': end_dt.isoformat(), 'timeZone': 'Asia/Kolkata'},
             'location': 'Virtual',
-            'attendees': []  # <-- avoids 403 "Service accounts cannot invite attendees"
+            'attendees': []  # avoid 403
         }
 
         service.events().insert(calendarId=calendar_id, body=event).execute()
@@ -207,7 +219,7 @@ def main():
             print(f"[INFO] Processing company: {company}")
             relevant = filter_entries(entries, [company])
             if relevant:
-                entry = relevant[0]  # Only process latest event per company per run
+                entry = relevant[0]
                 print(f"[INFO] Downloading and parsing PDF for event: {entry.title}")
                 details = parse_pdf_details(entry.get('link', ''))
                 create_calendar_event(service, CALENDAR_ID, company, entry, details, GUEST_EMAIL)
