@@ -1,2 +1,252 @@
-Mold-Tek Packaging Limited
-Sterling and Wilson Renewable Energy Limited
+Apar Industries Ltd
+Azad Engineering Ltd
+Bharat Dynamics Limited
+Bharat Electronics Ltd
+CG Power and Industrial Solutions Limited
+Craftsman Automation
+Cummins India Ltd
+Ellenbarrie Industrial Gases
+Gabriel India Ltd.
+GE Vernova T&D India
+Hero Motocorp Ltd
+Hindustan Aeronautics Limited
+Hitachi Energy India Limited
+Hyundai Motors
+KSB Limited
+Mahindra & Mahindra Ltd
+Maruti Suzuki India Ltd
+Mazagon Dock Shipbuilders Limited
+MTAR Tech Ltd
+Pitti Engineering Limited
+Pricol Ltd
+PTC Industries Limited
+Samvardhana Motherson International Ltd
+Schaeffler India Ltd
+Siemens Energy
+Solar Industries India Ltd.
+Tata Motors
+TD Power
+Transformers And Rectifiers (India) Limited
+Triveni Turbine Ltd
+Tube Investments Of India Limited
+Tvs Motor Ltd
+UNO Minda Limited
+VA Tech Wabag Ltd
+Varroc Engineering Limited
+Zen Technologies Limited
+ZF Comm Vehicle Control Systems India Ltd
+Force Motors
+A B B
+Action Const.Eq.
+Aditya Infotech
+AGI Greenpac
+AIA Engineering
+Ajax Engineering
+Alpex Solar
+Amara Raja Ener.
+APL Apollo Tubes
+Apollo Micro Sys
+Apollo Tyres
+Asahi India Glass Ltd
+Ashok Leyland Ltd.
+Ask Automotive Ltd
+Astra Microwave
+Astral
+Ather Energy
+Atlanta Electric
+Automotive Axles
+Avalon Tech
+Avantel
+AXISCADES Tech.
+B H E L
+Bajaj Auto Ltd
+Balkrishna Industries Ltd
+Balu Forge
+Banco Products
+Bansal Wire Inds
+Belrise Industri
+BEML Ltd
+Bharat Bijlee
+Bharat Forge
+Bharat Heavy Electricals Ltd.
+Borosil Renew.
+Bosch Ltd.
+Carborundum Uni.
+Carraro India Limited
+CEAT
+Centum Electron
+CIE Automotive
+Cochin Shipyard
+Cyient DLM
+Data Pattern
+DCX Systems
+Diamond Power
+Dynamatic Tech.
+Eicher Motors
+Elecon Engg.Co
+Electrosteel Castings Ltd
+Elgi Equipments
+EMS
+Endurance Tech.
+Enviro Infra
+EPL Ltd
+Esab India
+Escorts Kubota
+Exide Inds.
+Federal-Mogul Go
+Fiem Industries
+Finolex Cables
+Finolex Inds.
+Gallantt Ispat L
+GARDEN REACH SHIPBUILDERS & ENGINEERS LTD
+Garware Hi Tech
+Genus Power
+GMM Pfaudler
+Godawari Power
+Goodluck India
+Graphite India
+Greaves Cotton
+Grindwell Norton
+Happy Forgings
+Harsha Engg Intl
+HBL Engineering
+HEG
+Hind Rectifiers
+HLE Glascoat
+Honda India
+Honeywell automation
+HPL Electric
+Indosolar
+Ingersoll-Rand
+Inox India
+Inox Wind
+ION Exchange
+Jai Corp
+Jain Irrigation
+Jamna Auto Inds.
+Jash Engineering
+Jayaswal Neco
+Jaykay Enter.
+JBM Auto
+Jindal Saw
+JK Tyre & Indust
+John Cockerill
+JTEKT India
+JTL Industries
+Jupiter Wagons
+Jyoti CNC Auto.
+Kalyani Steels
+Kaynes Tech
+KEI Industries
+Kennametal India
+Kilburn Engg.
+Kingfa Science
+Kirl. Brothers
+Kirl.Pneumatic
+Kirloskar Indus.
+Kirloskar Oil
+KP Green Engg.
+KRN Heat Exchan
+L G Balakrishnan
+Landmark Cars
+Lloyds Engineeri
+LMW
+Lumax Auto Tech.
+Lumax Industries
+Mah. Seamless
+Man Industries
+Marine Electric.
+Marsons
+Minda Corp
+Mishra Dhatu Nig
+Mold-Tek Pack.
+Motherson Wiring
+MRF
+NRB Bearings
+Ola Electric Mobility Limited
+Olectra Greentech Limited
+Oriana Power Ltd
+Oswal Pumps
+Paras Defence
+Pennar Industrie
+Polycab India
+Polyplex Corpn
+Praj Industries Ltd
+Prec. Wires (I)
+Premier Energies
+Prince Pipes
+Quality Power El
+R R Kabel
+Raghav Product.
+Rajesh Power
+Ram Ratna Wires
+Ramkrishna Forgings Limited
+Ratnamani Metals
+Ravindra Energy
+Refex Industries
+RHI Magnesita
+Rolex Rings
+Rossell Techsys
+Saatvik Green
+Sambhv Steel
+Sandhar Tech
+Sansera Enginee.
+Schneider Elect.
+Servotech Renew
+Shaily Engineer.
+Shakti Pumps
+Shanthi Gears
+Sharda Motor
+Shilchar Tech.
+Shivalik Bimetal
+Shriram Pistons
+Shyam Metalics
+Siemens Energy
+Siemens Ltd
+Sika Interplant
+SJS Enterprises
+SKF India
+Skipper
+SML ISUZU
+Sona BLW Precis.
+Standard Glass Lining Technology Ltd
+Steel Str. Wheel
+Subros
+Sundaram Clayton
+Sundram Fasten.
+Sunflag Iron
+Suprajit Engg.
+Supreme Inds.
+Surya Roshni
+Suzlon Energy
+Swan Defence
+Swaraj Engines
+Syrma SGS Tech.
+T R I L
+TCPL Packaging
+Technocraf.Inds.
+Tega Industries Ltd
+Texmaco Rail
+The Anup Enginee
+Thermax
+Time Technoplast
+Timken India
+Titagarh Rail
+Transrail Light
+TVS Srichakra
+Uflex
+Unimech Aerospace and Manufacturing Limited
+Usha Martin
+Vardhman Special
+Venus Pipes
+Vesuvius India
+Vikram Solar
+Volt.Transform.
+VST Till. Tract.
+Waaree Energies
+Waaree Renewab.
+Websol Energy
+Welspun Corp
+Windsor Machines
+WPIL
+XPRO India
