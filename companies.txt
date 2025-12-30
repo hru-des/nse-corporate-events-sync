@@ -1,252 +1,216 @@
-Apar Industries Ltd
-Azad Engineering Ltd
-Bharat Dynamics Limited
-Bharat Electronics Ltd
+Eternal Limited
+Coforge Limited
+Persistent Systems Ltd
+Kalyan Jewellers India Limited
+Dixon Technologies (India) Limited
+One 97 Communications Limited
+Polycab India Limited
+Bharti Airtel Ltd
+Prestige Estates Projects Ltd
 CG Power and Industrial Solutions Limited
-Craftsman Automation
-Cummins India Ltd
-Ellenbarrie Industrial Gases
-Gabriel India Ltd.
-GE Vernova T&D India
-Hero Motocorp Ltd
-Hindustan Aeronautics Limited
-Hitachi Energy India Limited
-Hyundai Motors
-KSB Limited
-Mahindra & Mahindra Ltd
-Maruti Suzuki India Ltd
-Mazagon Dock Shipbuilders Limited
-MTAR Tech Ltd
-Pitti Engineering Limited
-Pricol Ltd
+Multi Commodity Exchange of India Ltd
+Aditya Birla Capital Limited
+Muthoot Finance Ltd
+KEI Industries Limited
+Amber Enterprises India Limited
+Kaynes Technology India Limited
+Cholamandalam Investment and Finance Company Ltd
 PTC Industries Limited
-Samvardhana Motherson International Ltd
-Schaeffler India Ltd
-Siemens Energy
-Solar Industries India Ltd.
-Tata Motors
-TD Power
-Transformers And Rectifiers (India) Limited
-Triveni Turbine Ltd
+Apar Industries Ltd
+Waaree Energies Limited
+BSE Limited
+Suzlon Energy Ltd
+Piramal Finance Limited
+Bharti Hexacom Limited
+Premier Energies Limited
+Billionbrains Garage Ventures Ltd
+Onesource Specialty Pharma Limited
+Gujarat Fluorochemicals Limited
+Bharat Electronics Ltd
+L&T Finance Limited
+Shaily Engineering Plastics Limited
+PB Fintech Limited
+Siemens Energy India Limited
 Tube Investments Of India Limited
-Tvs Motor Ltd
-UNO Minda Limited
-VA Tech Wabag Ltd
-Varroc Engineering Limited
+Bharti Airtel Ltd Partly Paid 1.25 FV
+Bajaj Finance Ltd
+Angel One Limited
+Bharat Dynamics Limited
+Radico Khaitan Ltd
+PG Electroplast Limited
+Ather Energy Limited
+TVS Motor Company Ltd
+Trent Ltd
+Jain Resource Recycling Limited
+Inox Wind Ltd
 Zen Technologies Limited
-ZF Comm Vehicle Control Systems India Ltd
-Force Motors
-A B B
-Action Const.Eq.
-Aditya Infotech
-AGI Greenpac
-AIA Engineering
-Ajax Engineering
-Alpex Solar
-Amara Raja Ener.
-APL Apollo Tubes
-Apollo Micro Sys
-Apollo Tyres
+Ola Electric Mobility Ltd
+Hitachi Energy India Limited
+HealthCare Global Enterprises Ltd.
+Religare Enterprises Ltd
+Max Healthcare Institute Limited
+V2 Retail Ltd
+ARCHEAN CHEMICAL INDUSTRIES LIMITED
+ICICI Bank Ltd
+GE Vernova T&D India Limited
+Larsen & Toubro Ltd
+Aegis Vopak Terminals Limited
+Samvardhana Motherson International Ltd
+Ellenbarrie Industrial Gases Limited
+Interglobe Aviation Ltd
+State Bank of India
+Bharat Heavy Electricals Ltd
+C.E. Info Systems Limited
+EMUDHRA LIMITED
+Hindustan Aeronautics Limited
+IDFC First Bank Limited
+Five Star Business Finance Ltd
+Ujjivan Small Finance Bank Limited
+Mahindra & Mahindra Ltd
+TD POWER SYSTEMS LIMITED
+MTAR Technologies Limited
+PhysicsWallah Limited
+HDFC Bank Ltd
+K.P.R. Mill Limited
+Maruti Suzuki India Ltd
+Sky Gold And Diamonds Limited
+Neuland Laboratories Ltd
+Cummins India Ltd
+Dr Agarwals Health Care Limited
+ZEPTO LTD_S3
+Gabriel India Limited
+Gravita India Limited
+Pricol Ltd
+CCL Products India Ltd
+Karur Vysya Bank Ltd
+Reliance Industries Ltd
+CreditAccess Grameen Limited
+JSW ENERGY LIMITED
+GLENMARK PHARMACEUTICALS LTD
+NAVIN FLUORINE INTERNATIONAL LTD
+City Union Bank Ltd
+Aditya Birla Real Estate Limited
+Thirumalai Chemicals Limited
+Syrma SGS Technology Ltd
+Zensar Technologies Ltd
+LG Electronics India Ltd
+Campus Activewear Limited
+Aditya Vision Ltd
+National Stock Exchange of India Limited
+Shriram Finance Limited
+Eclerx Services Ltd
+Rubicon Research Limited
+SOBHA LIMITED
+JINDAL STEEL AND POWER LTD.
+VA Tech Wabag Ltd
+INDUSIND BANK LIMITED
+DCB Bank Limited
+Rainbow Childrens Medicare Limited
+V-Mart Retail Limited
+Infosys Ltd
 Asahi India Glass Ltd
-Ashok Leyland Ltd.
-Ask Automotive Ltd
-Astra Microwave
-Astral
-Ather Energy
-Atlanta Electric
-Automotive Axles
-Avalon Tech
-Avantel
-AXISCADES Tech.
-B H E L
-Bajaj Auto Ltd
-Balkrishna Industries Ltd
-Balu Forge
-Banco Products
-Bansal Wire Inds
-Belrise Industri
-BEML Ltd
-Bharat Bijlee
-Bharat Forge
-Bharat Heavy Electricals Ltd.
-Borosil Renew.
-Bosch Ltd.
-Carborundum Uni.
-Carraro India Limited
-CEAT
-Centum Electron
-CIE Automotive
-Cochin Shipyard
-Cyient DLM
-Data Pattern
-DCX Systems
-Diamond Power
-Dynamatic Tech.
-Eicher Motors
-Elecon Engg.Co
-Electrosteel Castings Ltd
-Elgi Equipments
-EMS
-Endurance Tech.
-Enviro Infra
-EPL Ltd
-Esab India
-Escorts Kubota
-Exide Inds.
-Federal-Mogul Go
-Fiem Industries
-Finolex Cables
-Finolex Inds.
-Gallantt Ispat L
-GARDEN REACH SHIPBUILDERS & ENGINEERS LTD
-Garware Hi Tech
-Genus Power
-GMM Pfaudler
-Godawari Power
-Goodluck India
-Graphite India
-Greaves Cotton
-Grindwell Norton
-Happy Forgings
-Harsha Engg Intl
-HBL Engineering
-HEG
-Hind Rectifiers
-HLE Glascoat
-Honda India
-Honeywell automation
-HPL Electric
-Indosolar
-Ingersoll-Rand
-Inox India
-Inox Wind
-ION Exchange
-Jai Corp
-Jain Irrigation
-Jamna Auto Inds.
-Jash Engineering
-Jayaswal Neco
-Jaykay Enter.
-JBM Auto
-Jindal Saw
-JK Tyre & Indust
-John Cockerill
-JTEKT India
-JTL Industries
-Jupiter Wagons
-Jyoti CNC Auto.
-Kalyani Steels
-Kaynes Tech
-KEI Industries
-Kennametal India
-Kilburn Engg.
-Kingfa Science
-Kirl. Brothers
-Kirl.Pneumatic
-Kirloskar Indus.
-Kirloskar Oil
-KP Green Engg.
-KRN Heat Exchan
-L G Balakrishnan
-Landmark Cars
-Lloyds Engineeri
-LMW
-Lumax Auto Tech.
-Lumax Industries
-Mah. Seamless
-Man Industries
-Marine Electric.
-Marsons
-Minda Corp
-Mishra Dhatu Nig
-Mold-Tek Pack.
-Motherson Wiring
-MRF
-NRB Bearings
-Ola Electric Mobility Limited
-Olectra Greentech Limited
-Oriana Power Ltd
-Oswal Pumps
-Paras Defence
-Pennar Industrie
-Polycab India
-Polyplex Corpn
-Praj Industries Ltd
-Prec. Wires (I)
-Premier Energies
-Prince Pipes
-Quality Power El
-R R Kabel
-Raghav Product.
-Rajesh Power
-Ram Ratna Wires
-Ramkrishna Forgings Limited
-Ratnamani Metals
-Ravindra Energy
-Refex Industries
-RHI Magnesita
-Rolex Rings
-Rossell Techsys
-Saatvik Green
-Sambhv Steel
-Sandhar Tech
-Sansera Enginee.
-Schneider Elect.
-Servotech Renew
-Shaily Engineer.
-Shakti Pumps
-Shanthi Gears
-Sharda Motor
-Shilchar Tech.
-Shivalik Bimetal
-Shriram Pistons
-Shyam Metalics
-Siemens Energy
-Siemens Ltd
-Sika Interplant
-SJS Enterprises
-SKF India
-Skipper
-SML ISUZU
-Sona BLW Precis.
-Standard Glass Lining Technology Ltd
-Steel Str. Wheel
-Subros
-Sundaram Clayton
-Sundram Fasten.
-Sunflag Iron
-Suprajit Engg.
-Supreme Inds.
-Surya Roshni
-Suzlon Energy
-Swan Defence
-Swaraj Engines
-Syrma SGS Tech.
-T R I L
-TCPL Packaging
-Technocraf.Inds.
-Tega Industries Ltd
-Texmaco Rail
-The Anup Enginee
-Thermax
-Time Technoplast
-Timken India
-Titagarh Rail
-Transrail Light
-TVS Srichakra
-Uflex
-Unimech Aerospace and Manufacturing Limited
-Usha Martin
-Vardhman Special
-Venus Pipes
-Vesuvius India
-Vikram Solar
-Volt.Transform.
-VST Till. Tract.
-Waaree Energies
-Waaree Renewab.
-Websol Energy
-Welspun Corp
-Windsor Machines
-WPIL
-XPRO India
+ETHOS LIMITED
+Cholamandalam Financial Holdings Limited
+Vijaya Diagnostic Centre Limited
+JM Financial Ltd
+HERO MOTOCORP LIMITED
+Sonata Software Ltd
+AU Small Finance Bank Limited
+Styrenix Performance Materials Limited
+Varroc Engineering Limited
+Birlasoft Limited
+International Gemmological Institute India Ltd
+Gokaldas Exports Ltd
+Chalet Hotels Limited
+Central Depository Services (India) Limited
+Hexaware Technologies Limited
+Acutaas Chemicals Limited
+KSB Limited
+Sagility Limited
+Deepak Fertilizers & Petro Corp Ltd
+Titan Company Limited
+Wework India Management Limited
+Varun Beverages Ltd
+Triveni Turbine Ltd
+ITC Ltd
+KEC International Ltd
+Tata Consultancy Services Ltd
+Axis Bank Ltd
+Sun Pharmaceutical Industries Limited
+VVDN Technologies Private Limited_CCD
+Mrs. Bectors Food Specialities Limited
+Kotak Mahindra Bank Ltd
+Allied Blenders And Distillers Limited
+P N Gadgil Jewellers Limited
+POWER MECH PROJECTS LIMITED
+Transformers And Rectifiers (India) Limited
+Aster DM Healthcare Limited
+Rossari Biotech Limited
+Tata Capital Limited
+UNO Minda Ltd
+DLF Ltd
+J B Chemicals and Pharma Ltd
+Affle 3i Limited
+Godfrey Phillips India Ltd
+Indus Towers Limited
+SIMPOLO VITRIFIED PRIVATE LIMITED PREFERENCE SHARES
+SBI Life Insurance Company Limited
+VVDN Technologies Private Limited
+NTPC Ltd
+Whirlpool of India Ltd
+Indiqube Spaces Limited
+Lenskart Solutions Limited
+Brigade Hotel Ventures Limited
+ZF Comm Vehicle Control Systems India Ltd
+Mastek Ltd
+Grasim Industries Ltd
+Power Grid Corporation of India Ltd
+Bajaj Holdings and Investment Ltd
+Tech Mahindra Ltd
+Oil & Natural Gas Corporation Ltd
+Mphasis Ltd
+Info Edge India Ltd
+REC Limited
+LTIMindtree Limited
+HI-TECH PIPES LIMITED
+Euro Pratik Sales Ltd.
+GNG Electronics Ltd
+Intellect Design Arena Ltd
+Firstsource Solutions Ltd
+Emmvee Photovoltaic Power Limited
+Solarworld Energy Solutions Limited
+Aptus Value Housing Finance India Limited
+Netweb Technologies India Limited
+Sambhv Steel Tubes Ltd
+Pine Labs Limited
+Rategain Travel Technologies Limited
+Flair Writing Industries Limited
+APL Apollo Tubes Limited
+Supreme Petrochem Limited
+Tenneco Clean Air India Limited
+Restaurant Brands Asia Limited
+Canara HSBC Life Insurance company Ltd
+Zaggle Prepaid Ocean Services Limited
+Azad Engineering Ltd
+Anthem Biosciences Limited
+Canara Robeco Asset Management Company Ltd
+SIMPOLO VITRIFIED PRIVATE LIMITED EQUITY SHARES
+Global Health Limited
+Sudeep Pharma Limited
+Stylam Industries Limited
+Unicommerce Esolutions Limited
+Swiggy Limited
+Yatra Online Limited
+Clean Science and Technology Limited
+Taj GVK Hotels and Resorts Ltd
+JSW Cement Limited
+Aditya Infotech Limited
+Le Travenues Technology Ltd
+Seshaasai Technologies Limited
+Gk Energy Limited
+UltraTech Cement Ltd.
+Blue Star Ltd
+Mazagon Dock Shipbuilders Limited
+Schaeffler India Limited
+The Indian Hotels Company Limited
+KFin Technologies Limited
