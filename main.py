@@ -15,7 +15,7 @@ from PyPDF2 import PdfReader
 RSS_URL = 'https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml'
 COMPANY_FILE = 'companies.txt'
 CALENDAR_ID = 'fcb0ebfa795ba8af091f332acac0c5f0a33c5bd4982ef4db622bb9467188d11c@group.calendar.google.com'
-FUZZY_THRESHOLD = 95
+FUZZY_THRESHOLD = 98
 EVENT_TAG = "[AUTO:NSE_RSS_SCRIPT]"
 GUEST_EMAIL = os.environ.get('GCAL_GUEST_EMAIL', "")
 
