@@ -70,7 +70,7 @@ def filter_entries(entries, companies):
     allowed_keywords = [
         'analyst', 'analysts', 'institutional', 'investor',
         'concall', 'conference call', 'conferencecall',
-        'meet', 'call', 'meetconcall', 'meet/concall'
+        'meet', 'call', 'meetconcall', 'meet/concall', 'Trading'
     ]
     allowed_keywords_norm = [normalize(k) for k in allowed_keywords]
     matches = []
